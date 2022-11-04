@@ -96,7 +96,8 @@ FROM --platform=${TARGETPLATFORM} "docker.io/library/alpine:${ALPINE_VERSION}"
 # install some required dependencies
 RUN apk add --no-cache \
   ca-certificates \
-  gettext
+  gettext \
+  curl
 
 ARG JENA_VERSION
 ARG FUSEKI_HOME
@@ -112,13 +113,13 @@ COPY --from=deps "${FUSEKI_HOME}" "${FUSEKI_HOME}"
 # -u: explicit UID
 RUN adduser -H -D -u 1000 fuseki fuseki
 
-RUN mkdir -p "${FUSEKI_BASE}/databases" \
-  && chown -R fuseki "${FUSEKI_BASE}"
+RUN mkdir -p "${FUSEKI_BASE}/databases"
 
 WORKDIR "${FUSEKI_HOME}"
 COPY config/log4j2.properties config/shiro.ini entrypoint.sh ./
 COPY config/config.ttl "${FUSEKI_BASE}"
-RUN chmod +x entrypoint.sh
+RUN chmod +x entrypoint.sh \
+ && chown -R fuseki "${FUSEKI_BASE}"
 
 # default environment variables
 ENV \
