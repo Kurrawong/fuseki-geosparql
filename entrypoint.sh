@@ -2,9 +2,25 @@
 
 export OTEL_RESOURCE_ATTRIBUTES="container.id=$(hostname),${OTEL_RESOURCE_ATTRIBUTES}"
 
-envsubst '$ADMIN_PASSWORD' \
-  < "${FUSEKI_HOME}/shiro.ini" \
-  > "${FUSEKI_BASE}/shiro.ini"
+if [ -n "${CONFIG_LOCATION}" ]; then
+  curl "${CONFIG_LOCATION}" -s >"$FUSEKI_BASE/config.ttl" &&
+    echo Added config.ttl from "${CONFIG_LOCATION}"
+fi
+
+if [ -n "${SHIRO_LOCATION}" ]; then
+  curl "${SHIRO_LOCATION}" -s >"$FUSEKI_BASE/template-shiro.ini" &&
+    echo Added shiro.ini from "${SHIRO_LOCATION}" &&
+  envsubst '$ADMIN_PASSWORD' \
+  <"${FUSEKI_BASE}/template-shiro.ini" \
+  >"${FUSEKI_BASE}/shiro.ini" &&
+  rm "${FUSEKI_BASE}/template-shiro.ini"
+else
+    envsubst '$ADMIN_PASSWORD' \
+  <"${FUSEKI_HOME}/shiro.ini" \
+  >"${FUSEKI_BASE}/shiro.ini"
+fi
+
+
 
 exec \
   "${JAVA_HOME}/bin/java" \
