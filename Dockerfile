@@ -100,7 +100,8 @@ FROM --platform=${TARGETPLATFORM} docker.io/library/alpine:${ALPINE_VERSION}
 RUN apk add --no-cache \
   ca-certificates \
   gettext \
-  curl
+  curl \
+  sudo
 
 ARG JENA_VERSION
 ARG FUSEKI_HOME
@@ -114,8 +115,10 @@ COPY --from=deps "${FUSEKI_HOME}" "${FUSEKI_HOME}"
 # -H: no home directorry
 # -D: no password
 # -u: explicit UID
-RUN adduser -H -D -u 1000 fuseki fuseki
-
+RUN adduser -H -D -u 1000 fuseki fuseki \
+    && mkdir -p /etc/sudoers.d  \
+    && echo "fuseki ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/fuseki  \
+    && chmod 0440 /etc/sudoers.d/fuseki
 RUN mkdir -p "${FUSEKI_BASE}/databases" \
   && chown -R fuseki "${FUSEKI_BASE}"
 
