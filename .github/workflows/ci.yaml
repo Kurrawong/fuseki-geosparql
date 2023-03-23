@@ -3,9 +3,7 @@ name: Build and push Docker image
 on:
   push:
     branches:
-      - "**"
-    tags:
-      - "v*.*.*"
+      - "main"
 
 jobs:
   docker:
@@ -32,7 +30,7 @@ jobs:
         uses: zazuko/action-docker-meta@main
         id: docker_meta
         with:
-          images: ghcr.io/zazuko/fuseki-geosparql
+          images: ghcr.io/kurrawong/fuseki-geosparql
 
       - name: Build and push Docker images
         id: docker_build
