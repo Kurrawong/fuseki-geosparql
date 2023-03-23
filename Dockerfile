@@ -3,9 +3,6 @@ ARG ALPINE_VERSION="3.16"
 ARG JENA_VERSION="4.7.0"
 ARG OTEL_VERSION="1.17.0"
 ARG MAVEN_VERSION="3.8.6"
-ARG BUILDPLATFORM="linux/amd64"
-ARG TARGETPLATFORM="linux/amd64"
-
 
 # configure some paths, names and args
 ARG FUSEKI_HOME="/opt/fuseki"
