@@ -104,6 +104,15 @@ ARG JAVA_MINIMAL
 COPY --from=deps "${JAVA_MINIMAL}" "${JAVA_MINIMAL}"
 COPY --from=deps "${FUSEKI_HOME}" "${FUSEKI_HOME}"
 
+# # Download and extract Apache Jena.
+RUN wget --quiet https://dlcdn.apache.org/jena/binaries/apache-jena-${JENA_VERSION}.tar.gz -O /tmp/apache-jena.tar.gz && \
+    mkdir -p /opt && \
+    tar -xzf /tmp/apache-jena.tar.gz -C /opt && \
+    rm -f /tmp/apache-jena.tar.gz
+
+# # Add Apache Jena's bin directory to the PATH so its commands are available.
+ENV PATH="/opt/apache-jena-${JENA_VERSION}/bin:${PATH}"
+
 # Run as this user
 # -H: no home directorry
 # -D: no password
